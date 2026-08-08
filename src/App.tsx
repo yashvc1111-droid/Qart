@@ -9,12 +9,15 @@ import { Cart } from './screens/Cart';
 import { Checkout } from './screens/Checkout';
 import { Success } from './screens/Success';
 import { ExitScanner } from './screens/ExitScanner';
+import { ShoppingList } from './screens/ShoppingList';
 
 function App() {
   const [screen, setScreen] = useState<Screen>('login');
   const [userName, setUserName] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [order, setOrder] = useState<OrderDetails | null>(null);
+  const [shoppingList, setShoppingList] = useState<string[]>([]);
+  const [checkedList, setCheckedList] = useState<string[]>([]);
 
   const handleLogin = (name: string) => {
     setUserName(name);
@@ -28,9 +31,29 @@ function App() {
     setScreen('product');
   };
 
+  const markScannedForList = (p: Product) => {
+    if (shoppingList.includes(p.id)) {
+      setCheckedList((current) =>
+        current.includes(p.id) ? current : [...current, p.id]
+      );
+    }
+  };
+
   const handleScan = (p: Product) => {
+    markScannedForList(p);
     setSelectedProduct(p);
     setScreen('product');
+  };
+
+  const addToShoppingList = (productId: string) => {
+    setShoppingList((current) =>
+      current.includes(productId) ? current : [...current, productId]
+    );
+  };
+
+  const removeFromShoppingList = (productId: string) => {
+    setShoppingList((current) => current.filter((id) => id !== productId));
+    setCheckedList((current) => current.filter((id) => id !== productId));
   };
 
   const handleCheckoutSuccess = (o: OrderDetails) => {
@@ -43,10 +66,32 @@ function App() {
       {screen === 'login' && <Login onLogin={handleLogin} />}
 
       {screen === 'home' && (
-        <Home userName={userName} onNavigate={(s) => setScreen(s)} onSelectProduct={handleSelectProduct} />
+        <Home
+          userName={userName}
+          onNavigate={(s) => setScreen(s)}
+          onSelectProduct={handleSelectProduct}
+          shoppingListCount={shoppingList.length}
+        />
       )}
 
-      {screen === 'scanner' && <Scanner onBack={goHome} onScan={handleScan} />}
+      {screen === 'scanner' && (
+        <Scanner
+          onBack={goHome}
+          onScan={handleScan}
+          onProductDetected={markScannedForList}
+        />
+      )}
+
+      {screen === 'shoppingList' && (
+        <ShoppingList
+          productIds={shoppingList}
+          checkedIds={checkedList}
+          onBack={goHome}
+          onAddProduct={addToShoppingList}
+          onRemoveProduct={removeFromShoppingList}
+          onScan={() => setScreen('scanner')}
+        />
+      )}
 
       {screen === 'product' && selectedProduct && (
         <ProductDetails

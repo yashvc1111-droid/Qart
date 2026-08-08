@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react';
-import { Search, ScanLine, Star, TrendingDown, MapPin, Bell, Zap, Flame, Sparkles } from 'lucide-react';
+import { Search, ScanLine, Star, TrendingDown, MapPin, Bell, Zap, Flame, Sparkles, ListChecks } from 'lucide-react';
 import { CATEGORIES, OFFERS, PRODUCTS, HERO_IMAGE, formatINR } from '../data';
 import type { Product } from '../types';
 import { TopBar } from '../components/TopBar';
 
 interface HomeProps {
   userName: string;
-  onNavigate: (screen: 'cart' | 'scanner' | 'product') => void;
+  onNavigate: (screen: 'cart' | 'scanner' | 'product' | 'shoppingList') => void;
   onSelectProduct: (p: Product) => void;
+  shoppingListCount: number;
 }
 
 const TAG_STYLES: Record<string, { label: string; class: string }> = {
@@ -16,7 +17,7 @@ const TAG_STYLES: Record<string, { label: string; class: string }> = {
   deal: { label: 'Hot Deal', class: 'bg-error text-white' },
 };
 
-export function Home({ userName, onNavigate, onSelectProduct }: HomeProps) {
+export function Home({ userName, onNavigate, onSelectProduct, shoppingListCount }: HomeProps) {
   const [query, setQuery] = useState('');
   const [activeCat, setActiveCat] = useState('all');
 
@@ -48,13 +49,28 @@ export function Home({ userName, onNavigate, onSelectProduct }: HomeProps) {
               className="w-full bg-transparent text-sm font-medium text-ink outline-none placeholder:text-muted/70"
             />
           </div>
-          <button
-            onClick={() => onNavigate('scanner')}
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-dark text-white shadow-soft transition hover:bg-brand active:scale-95"
-            aria-label="Scan barcode"
-          >
-            <ScanLine className="h-5 w-5" />
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              onClick={() => onNavigate('shoppingList')}
+              className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-brand-dark shadow-soft ring-1 ring-brand-mint/40 transition hover:bg-brand-light active:scale-95"
+              aria-label="Shopping list"
+            >
+              <ListChecks className="h-5 w-5" />
+              {shoppingListCount > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-extrabold text-white">
+                  {shoppingListCount}
+                </span>
+              )}
+            </button>
+
+            <button
+              onClick={() => onNavigate('scanner')}
+              className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-dark text-white shadow-soft transition hover:bg-brand active:scale-95"
+              aria-label="Scan barcode"
+            >
+              <ScanLine className="h-5 w-5" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -70,6 +86,26 @@ export function Home({ userName, onNavigate, onSelectProduct }: HomeProps) {
             <Bell className="h-5 w-5" />
           </button>
         </div>
+
+        <button
+          onClick={() => onNavigate('shoppingList')}
+          className="mt-3 flex w-full items-center justify-between rounded-2xl bg-white px-4 py-3 text-left shadow-soft ring-1 ring-brand-mint/30 transition hover:bg-brand-light"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-light text-brand-dark">
+              <ListChecks className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-sm font-extrabold text-ink">My Shopping List</p>
+              <p className="text-[11px] text-muted">
+                {shoppingListCount === 0
+                  ? 'Add items before you shop'
+                  : `${shoppingListCount} item${shoppingListCount !== 1 ? 's' : ''} saved`}
+              </p>
+            </div>
+          </div>
+          <span className="text-xs font-bold text-brand-dark">Open →</span>
+        </button>
 
         {!query && (
           <div

@@ -7,34 +7,44 @@ import { TopBar } from '../components/TopBar';
 interface ScannerProps {
   onBack: () => void;
   onScan: (p: Product) => void;
+  onProductDetected?: (p: Product) => void;
 }
 
 const SCAN_STEPS = ['Detecting barcode', 'Reading digits', 'Matching product'];
 
-export function Scanner({ onBack, onScan }: ScannerProps) {
+export function Scanner({ onBack, onScan, onProductDetected }: ScannerProps) {
   const [scanning, setScanning] = useState(false);
   const [step, setStep] = useState(0);
   const [scannedProduct, setScannedProduct] = useState<Product | null>(null);
-  const [scanIndex, setScanIndex] = useState(0);
+  const [barcode, setBarcode] = useState('');
 
   useEffect(() => {
     if (!scanning) return;
+
     setStep(0);
     setScannedProduct(null);
+
     const stepTimer = setInterval(() => {
       setStep((s) => {
         if (s >= SCAN_STEPS.length - 1) {
           clearInterval(stepTimer);
-          const product = PRODUCTS[scanIndex % PRODUCTS.length];
-          setScanIndex((i) => i + 1);
-          setTimeout(() => setScannedProduct(product), 400);
+
+          const product = PRODUCTS.find((p) => p.barcode === barcode.trim()) ?? null;
+
+          setTimeout(() => {
+            setScannedProduct(product);
+            if (product) onProductDetected?.(product);
+          }, 400);
+
           return s;
         }
+
         return s + 1;
       });
     }, 700);
+
     return () => clearInterval(stepTimer);
-  }, [scanning, scanIndex]);
+  }, [scanning, barcode, onProductDetected]);
 
   const reset = () => {
     setScanning(false);
@@ -100,12 +110,43 @@ export function Scanner({ onBack, onScan }: ScannerProps) {
         </div>
 
         {!scanning && (
+          <div className="mx-auto mt-5 max-w-sm rounded-card bg-white p-4 shadow-soft">
+            <p className="text-xs font-bold uppercase tracking-wide text-muted">
+              Simulated Barcode Scanner
+            </p>
+            <p className="mt-1 text-xs text-muted">
+              Enter the barcode of the product you want to simulate scanning.
+            </p>
+
+            <input
+              value={barcode}
+              onChange={(e) => setBarcode(e.target.value)}
+              placeholder="Enter product barcode"
+              className="mt-3 w-full rounded-xl border border-brand-mint bg-canvas px-3 py-3 text-sm font-mono text-ink outline-none focus:ring-2 focus:ring-brand-mint"
+              inputMode="numeric"
+            />
+
           <button
             onClick={() => setScanning(true)}
+            disabled={!barcode.trim()}
             className="mx-auto mt-6 flex items-center gap-2 rounded-full bg-brand-dark px-6 py-3.5 text-sm font-bold text-white shadow-soft transition hover:bg-brand active:scale-95"
           >
             <ScanLine className="h-5 w-5" /> Start Scanning
           </button>
+          </div>
+        )}
+
+        {scanning && !scannedProduct && step === SCAN_STEPS.length - 1 && (
+          <div className="mx-auto mt-6 max-w-sm rounded-card bg-white p-4 text-center shadow-soft">
+            <p className="text-sm font-extrabold text-error">Product not found</p>
+            <p className="mt-1 text-xs text-muted">Check the barcode and try again.</p>
+            <button
+              onClick={reset}
+              className="mt-3 rounded-xl bg-brand-dark px-5 py-2.5 text-sm font-bold text-white"
+            >
+              Try Again
+            </button>
+          </div>
         )}
 
         {scanning && scannedProduct && (

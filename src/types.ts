@@ -6,7 +6,8 @@ export type Screen =
   | 'cart'
   | 'checkout'
   | 'success'
-  | 'exit';
+  | 'exit'
+  | 'shoppingList';
 
 export interface Product {
   id: string;
