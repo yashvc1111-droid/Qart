@@ -9,6 +9,7 @@ interface HomeProps {
   onNavigate: (screen: 'cart' | 'scanner' | 'product' | 'shoppingList') => void;
   onSelectProduct: (p: Product) => void;
   shoppingListCount: number;
+  onOpenHistory: () => void;
 }
 
 const TAG_STYLES: Record<string, { label: string; class: string }> = {
@@ -17,7 +18,7 @@ const TAG_STYLES: Record<string, { label: string; class: string }> = {
   deal: { label: 'Hot Deal', class: 'bg-error text-white' },
 };
 
-export function Home({ userName, onNavigate, onSelectProduct, shoppingListCount }: HomeProps) {
+export function Home({ userName, onNavigate, onSelectProduct, shoppingListCount, onOpenHistory }: HomeProps) {
   const [query, setQuery] = useState('');
   const [activeCat, setActiveCat] = useState('all');
 

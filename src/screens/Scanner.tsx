@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { ScanLine, X, Camera, RefreshCw, ChevronRight } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, RefreshCw, ScanLine } from 'lucide-react';
 import { PRODUCTS } from '../data';
 import type { Product } from '../types';
-import { TopBar } from '../components/TopBar';
 
 interface ScannerProps {
   onBack: () => void;
@@ -10,186 +9,126 @@ interface ScannerProps {
   onProductDetected?: (p: Product) => void;
 }
 
-const SCAN_STEPS = ['Detecting barcode', 'Reading digits', 'Matching product'];
+const SCAN_STEPS = [
+  'Searching for barcode...',
+  'Reading barcode...',
+  'Identifying product...',
+];
 
 export function Scanner({ onBack, onScan, onProductDetected }: ScannerProps) {
   const [scanning, setScanning] = useState(false);
   const [step, setStep] = useState(0);
   const [scannedProduct, setScannedProduct] = useState<Product | null>(null);
-  const [barcode, setBarcode] = useState('');
+
+  const startScan = () => {
+    setScannedProduct(null);
+    setStep(0);
+    setScanning(true);
+  };
 
   useEffect(() => {
     if (!scanning) return;
 
-    setStep(0);
-    setScannedProduct(null);
+    const timer = setInterval(() => {
+      setStep((current) => {
+        if (current >= SCAN_STEPS.length - 1) {
+          clearInterval(timer);
 
-    const stepTimer = setInterval(() => {
-      setStep((s) => {
-        if (s >= SCAN_STEPS.length - 1) {
-          clearInterval(stepTimer);
-
-          const product = PRODUCTS.find((p) => p.barcode === barcode.trim()) ?? null;
+          // Simulation: each scan randomly selects a product from the catalog.
+          const product = PRODUCTS[Math.floor(Math.random() * PRODUCTS.length)];
 
           setTimeout(() => {
             setScannedProduct(product);
-            if (product) onProductDetected?.(product);
-          }, 400);
+            onProductDetected?.(product);
+            onScan(product);
+            setScanning(false);
+          }, 500);
 
-          return s;
+          return current;
         }
-
-        return s + 1;
+        return current + 1;
       });
-    }, 700);
+    }, 750);
 
-    return () => clearInterval(stepTimer);
-  }, [scanning, barcode, onProductDetected]);
-
-  const reset = () => {
-    setScanning(false);
-    setStep(0);
-    setScannedProduct(null);
-  };
+    return () => clearInterval(timer);
+  }, [scanning, onProductDetected, onScan]);
 
   return (
-    <div className="min-h-screen bg-canvas pb-10">
-      <TopBar title="Scan Product" onCartClick={onBack} showCart={false} />
-
-      <div className="mx-auto max-w-5xl px-4 pt-5 sm:px-6">
-        <button
-          onClick={onBack}
-          className="mb-4 flex items-center gap-1 text-sm font-bold text-muted transition hover:text-brand-dark"
-        >
-          <X className="h-4 w-4" /> Cancel scan
-        </button>
-
-        <div className="relative mx-auto aspect-[3/4] max-w-sm overflow-hidden rounded-card bg-ink shadow-lift">
-          <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/40 via-ink to-brand-dark/50" />
-          <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'radial-gradient(circle at 50% 30%, rgba(255,255,255,0.15), transparent 60%)' }} />
-
-          {scanning && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative h-56 w-56">
-                <div className="absolute inset-0 rounded-full border-2 border-brand-mint/40" />
-                <div className="absolute inset-0 animate-pulse-ring rounded-full border-2 border-brand-mint" />
-                <div className="absolute left-1/2 top-1/2 h-44 w-44 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/20" />
-              </div>
-            </div>
-          )}
-
-          <div className="absolute left-1/2 top-1/2 h-52 w-64 -translate-x-1/2 -translate-y-1/2">
-            <span className="absolute left-0 top-0 h-7 w-7 border-l-4 border-t-4 border-brand-mint rounded-tl-lg" />
-            <span className="absolute right-0 top-0 h-7 w-7 border-r-4 border-t-4 border-brand-mint rounded-tr-lg" />
-            <span className="absolute bottom-0 left-0 h-7 w-7 border-b-4 border-l-4 border-brand-mint rounded-bl-lg" />
-            <span className="absolute bottom-0 right-0 h-7 w-7 border-b-4 border-r-4 border-brand-mint rounded-br-lg" />
-            {scanning && (
-              <div className="absolute left-2 right-2 top-1/2 h-0.5 -translate-y-1/2 bg-accent shadow-[0_0_12px_2px_rgba(255,122,26,0.7)] animate-scan" />
-            )}
+    <div className="min-h-screen bg-canvas pb-20">
+      <header className="bg-brand-dark px-4 py-4 text-white">
+        <div className="mx-auto flex max-w-5xl items-center justify-between">
+          <button onClick={onBack} className="flex items-center gap-1 text-sm font-bold">
+            <ArrowLeft className="h-4 w-4" /> Back
+          </button>
+          <div className="flex items-center gap-2 font-extrabold">
+            <ScanLine className="h-5 w-5" /> Scan Product
           </div>
+          <span className="text-xs text-white/70">Simulation</span>
+        </div>
+      </header>
 
-          {!scanning && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-white">
-              <Camera className="h-12 w-12 text-white/70" />
-              <p className="mt-3 text-sm font-bold">Point your camera at a product barcode</p>
-              <p className="mt-1 text-xs text-white/60">Align the barcode within the frame</p>
+      <main className="mx-auto max-w-3xl px-4 pt-5">
+        <div className="overflow-hidden rounded-[28px] bg-[#092c1d] shadow-lift">
+          <div className="relative h-[440px]">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="h-64 w-64 rounded-full border border-white/25" />
+              <div className="absolute h-48 w-48 rounded-full border border-white/20" />
             </div>
-          )}
 
-          {scanning && !scannedProduct && (
-            <div className="absolute bottom-6 left-0 right-0 text-center">
-              <p className="text-sm font-bold text-white animate-pulse">{SCAN_STEPS[step]}...</p>
-              <div className="mx-auto mt-2 h-1 w-32 overflow-hidden rounded-full bg-white/20">
-                <div
-                  className="h-full bg-accent transition-all duration-700"
-                  style={{ width: `${((step + 1) / SCAN_STEPS.length) * 100}%` }}
-                />
-              </div>
+            <div className="absolute left-[15%] right-[15%] top-[22%] h-1 rounded-full bg-orange-400 shadow-[0_0_14px_rgba(251,146,60,0.8)] animate-pulse" />
+            <div className="absolute left-[15%] top-[18%] h-10 w-10 rounded-tl-xl border-l-4 border-t-4 border-emerald-200" />
+            <div className="absolute right-[15%] top-[18%] h-10 w-10 rounded-tr-xl border-r-4 border-t-4 border-emerald-200" />
+            <div className="absolute bottom-[18%] left-[15%] h-10 w-10 rounded-bl-xl border-b-4 border-l-4 border-emerald-200" />
+            <div className="absolute bottom-[18%] right-[15%] h-10 w-10 rounded-br-xl border-b-4 border-r-4 border-emerald-200" />
+
+            <div className="absolute bottom-8 left-0 right-0 text-center text-sm font-bold text-white/90">
+              {scanning ? SCAN_STEPS[step] : 'Point the scanner at a product barcode'}
             </div>
-          )}
+          </div>
         </div>
 
-        {!scanning && (
-          <div className="mx-auto mt-5 max-w-sm rounded-card bg-white p-4 shadow-soft">
-            <p className="text-xs font-bold uppercase tracking-wide text-muted">
-              Simulated Barcode Scanner
-            </p>
-            <p className="mt-1 text-xs text-muted">
-              Enter the barcode of the product you want to simulate scanning.
-            </p>
-
-            <input
-              value={barcode}
-              onChange={(e) => setBarcode(e.target.value)}
-              placeholder="Enter product barcode"
-              className="mt-3 w-full rounded-xl border border-brand-mint bg-canvas px-3 py-3 text-sm font-mono text-ink outline-none focus:ring-2 focus:ring-brand-mint"
-              inputMode="numeric"
-            />
-
-          <button
-            onClick={() => setScanning(true)}
-            disabled={!barcode.trim()}
-            className="mx-auto mt-6 flex items-center gap-2 rounded-full bg-brand-dark px-6 py-3.5 text-sm font-bold text-white shadow-soft transition hover:bg-brand active:scale-95"
-          >
-            <ScanLine className="h-5 w-5" /> Start Scanning
-          </button>
-          </div>
-        )}
-
-        {scanning && !scannedProduct && step === SCAN_STEPS.length - 1 && (
-          <div className="mx-auto mt-6 max-w-sm rounded-card bg-white p-4 text-center shadow-soft">
-            <p className="text-sm font-extrabold text-error">Product not found</p>
-            <p className="mt-1 text-xs text-muted">Check the barcode and try again.</p>
-            <button
-              onClick={reset}
-              className="mt-3 rounded-xl bg-brand-dark px-5 py-2.5 text-sm font-bold text-white"
-            >
-              Try Again
-            </button>
-          </div>
-        )}
-
-        {scanning && scannedProduct && (
-          <div className="mx-auto mt-6 max-w-sm animate-pop rounded-card bg-white p-4 shadow-lift">
+        {scannedProduct && !scanning && (
+          <div className="mt-5 rounded-[24px] bg-white p-4 shadow-lift">
             <div className="flex items-center gap-3">
-              <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-brand-light">
-                <img src={scannedProduct.image} alt={scannedProduct.name} className="h-full w-full object-cover" />
-              </div>
+              <img
+                src={scannedProduct.image}
+                alt={scannedProduct.name}
+                className="h-16 w-16 rounded-xl bg-brand-light object-cover"
+              />
               <div className="min-w-0 flex-1">
-                <p className="text-[11px] font-bold uppercase text-muted">{scannedProduct.brand}</p>
-                <p className="truncate text-sm font-bold text-ink">{scannedProduct.name}</p>
+                <p className="text-[10px] font-bold uppercase text-muted">{scannedProduct.brand}</p>
+                <h2 className="truncate text-base font-extrabold text-ink">{scannedProduct.name}</h2>
                 <p className="text-xs text-muted">Barcode: {scannedProduct.barcode}</p>
               </div>
+              <CheckCircle2 className="h-7 w-7 shrink-0 text-brand-dark" />
             </div>
-            <div className="mt-3 flex gap-2">
-              <button
-                onClick={reset}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-brand-mint py-2.5 text-sm font-bold text-brand-dark transition hover:bg-brand-light"
-              >
-                <RefreshCw className="h-4 w-4" /> Rescan
-              </button>
-              <button
-                onClick={() => onScan(scannedProduct)}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-brand-dark py-2.5 text-sm font-bold text-white transition hover:bg-brand"
-              >
-                View Details <ChevronRight className="h-4 w-4" />
-              </button>
+
+            <div className="mt-3 rounded-xl bg-brand-light px-3 py-2 text-center text-xs font-bold text-brand-dark">
+              Product detected successfully
             </div>
           </div>
         )}
 
-        <div className="mx-auto mt-6 max-w-sm rounded-card bg-white p-4 shadow-soft">
-          <p className="text-xs font-bold uppercase tracking-wide text-muted">Recent barcodes</p>
-          <div className="mt-2 space-y-1.5">
-            {PRODUCTS.slice(0, 3).map((p) => (
-              <div key={p.id} className="flex items-center justify-between rounded-lg bg-canvas px-3 py-2">
-                <span className="font-mono text-xs text-ink">{p.barcode}</span>
-                <span className="text-xs font-semibold text-muted">{p.name.split(' ').slice(0, 2).join(' ')}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+        <button
+          onClick={startScan}
+          disabled={scanning}
+          className="mx-auto mt-5 flex w-full max-w-sm items-center justify-center gap-2 rounded-full bg-brand-dark px-6 py-4 text-sm font-extrabold text-white shadow-soft transition hover:bg-brand active:scale-95 disabled:opacity-50"
+        >
+          {scanning ? (
+            <>
+              <RefreshCw className="h-5 w-5 animate-spin" /> Scanning...
+            </>
+          ) : (
+            <>
+              <ScanLine className="h-5 w-5" /> {scannedProduct ? 'Scan Another Product' : 'Start Scanning'}
+            </>
+          )}
+        </button>
+
+        <p className="mx-auto mt-3 max-w-sm text-center text-[11px] text-muted">
+          Demo mode: every scan randomly selects a different product from the SmartCart catalog.
+        </p>
+      </main>
     </div>
   );
 }

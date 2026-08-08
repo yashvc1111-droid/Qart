@@ -10,6 +10,7 @@ import { Checkout } from './screens/Checkout';
 import { Success } from './screens/Success';
 import { ExitScanner } from './screens/ExitScanner';
 import { ShoppingList } from './screens/ShoppingList';
+import { ScanHistory } from './screens/ScanHistory';
 
 function App() {
   const [screen, setScreen] = useState<Screen>('login');
@@ -18,6 +19,7 @@ function App() {
   const [order, setOrder] = useState<OrderDetails | null>(null);
   const [shoppingList, setShoppingList] = useState<string[]>([]);
   const [checkedList, setCheckedList] = useState<string[]>([]);
+  const [scanHistory, setScanHistory] = useState<Product[]>([]);
 
   const handleLogin = (name: string) => {
     setUserName(name);
@@ -40,8 +42,19 @@ function App() {
   };
 
   const handleScan = (p: Product) => {
-    markScannedForList(p);
     setSelectedProduct(p);
+
+    if (shoppingList.includes(p.id)) {
+      setCheckedList((current) =>
+        current.includes(p.id) ? current : [...current, p.id]
+      );
+    }
+
+    setScanHistory((current) => [
+      p,
+      ...current.filter((item) => item.id !== p.id),
+    ].slice(0, 10));
+
     setScreen('product');
   };
 
@@ -71,6 +84,7 @@ function App() {
           onNavigate={(s) => setScreen(s)}
           onSelectProduct={handleSelectProduct}
           shoppingListCount={shoppingList.length}
+          onOpenHistory={() => setScreen('history')}
         />
       )}
 
@@ -82,6 +96,11 @@ function App() {
         />
       )}
 
+
+      {screen === 'history' && (
+        <ScanHistory history={scanHistory} onBack={goHome} onScan={() => setScreen('scanner')} />
+      )}
+
       {screen === 'shoppingList' && (
         <ShoppingList
           productIds={shoppingList}
@@ -90,6 +109,10 @@ function App() {
           onAddProduct={addToShoppingList}
           onRemoveProduct={removeFromShoppingList}
           onScan={() => setScreen('scanner')}
+          onNewList={() => {
+            setShoppingList([]);
+            setCheckedList([]);
+          }}
         />
       )}
 

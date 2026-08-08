@@ -7,7 +7,8 @@ export type Screen =
   | 'checkout'
   | 'success'
   | 'exit'
-  | 'shoppingList';
+  | 'shoppingList'
+  | 'history';
 
 export interface Product {
   id: string;
@@ -45,3 +46,9 @@ export interface OrderDetails {
 }
 
 export type PaymentMethod = 'upi' | 'card' | 'wallet';
+
+
+export interface ScanHistoryItem {
+  product: Product;
+  scannedAt: string;
+}

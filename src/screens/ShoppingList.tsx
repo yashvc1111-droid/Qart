@@ -9,6 +9,7 @@ interface ShoppingListProps {
   onAddProduct: (productId: string) => void;
   onRemoveProduct: (productId: string) => void;
   onScan: () => void;
+  onNewList: () => void;
 }
 
 export function ShoppingList({
@@ -18,6 +19,7 @@ export function ShoppingList({
   onAddProduct,
   onRemoveProduct,
   onScan,
+  onNewList,
 }: ShoppingListProps) {
   const listedProducts = productIds
     .map((id) => PRODUCTS.find((p) => p.id === id))
@@ -40,12 +42,20 @@ export function ShoppingList({
             <ListChecks className="h-5 w-5" />
             <span className="font-extrabold">My Shopping List</span>
           </div>
-          <button
-            onClick={onScan}
-            className="flex items-center gap-1 rounded-full bg-white/15 px-3 py-2 text-xs font-bold hover:bg-white/25"
-          >
-            <ScanLine className="h-4 w-4" /> Scan
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onNewList}
+              className="rounded-full bg-white/15 px-3 py-2 text-xs font-bold hover:bg-white/25"
+            >
+              New List
+            </button>
+            <button
+              onClick={onScan}
+              className="flex items-center gap-1 rounded-full bg-white/15 px-3 py-2 text-xs font-bold hover:bg-white/25"
+            >
+              <ScanLine className="h-4 w-4" /> Scan
+            </button>
+          </div>
         </div>
       </div>
 
