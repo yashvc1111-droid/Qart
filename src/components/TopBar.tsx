@@ -1,4 +1,4 @@
-import { ShoppingCart } from 'lucide-react';
+﻿import { ShoppingCart } from 'lucide-react';
 import { useCart } from '../cart';
 import { formatINR } from '../data';
 
@@ -19,7 +19,7 @@ export function TopBar({ title, onCartClick, showCart }: TopBarProps) {
             S
           </div>
           <div className="leading-tight">
-            <p className="text-sm font-extrabold tracking-tight">SmartCart</p>
+            <p className="text-sm font-extrabold tracking-tight">Qart</p>
             <p className="text-[11px] text-white/70">{title}</p>
           </div>
         </div>

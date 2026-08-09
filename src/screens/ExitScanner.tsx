@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { ScanLine, X, CheckCircle, XCircle, DoorOpen, Loader2, RotateCw } from 'lucide-react';
 import type { OrderDetails } from '../types';
 
@@ -97,7 +97,7 @@ export function ExitScanner({ order, onHome }: ExitScannerProps) {
               <CheckCircle className="h-11 w-11 text-brand-dark" />
             </div>
             <h2 className="mt-4 text-2xl font-extrabold text-brand-dark">Exit Approved</h2>
-            <p className="mt-1 text-sm text-muted">Thank you for shopping with SmartCart!</p>
+            <p className="mt-1 text-sm text-muted">Thank you for shopping with Qart!</p>
             {order && (
               <div className="mt-4 rounded-xl bg-canvas p-3 text-left text-sm">
                 <div className="flex justify-between"><span className="text-muted">Order ID</span><span className="font-mono font-bold text-ink">{order.orderId}</span></div>

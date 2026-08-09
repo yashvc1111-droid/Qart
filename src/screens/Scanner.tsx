@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { ArrowLeft, CheckCircle2, RefreshCw, ScanLine } from 'lucide-react';
 import { PRODUCTS } from '../data';
 import type { Product } from '../types';
@@ -126,7 +126,7 @@ export function Scanner({ onBack, onScan, onProductDetected }: ScannerProps) {
         </button>
 
         <p className="mx-auto mt-3 max-w-sm text-center text-[11px] text-muted">
-          Demo mode: every scan randomly selects a different product from the SmartCart catalog.
+          Demo mode: every scan randomly selects a different product from the Qart catalog.
         </p>
       </main>
     </div>

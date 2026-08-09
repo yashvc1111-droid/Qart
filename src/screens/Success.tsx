@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
 import { CheckCircle, Clock, DoorOpen, Download } from 'lucide-react';
 import type { OrderDetails } from '../types';
@@ -49,7 +49,7 @@ export function Success({ order, onExit, onHome }: SuccessProps) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const link = document.createElement('a');
-    link.download = `smartcart-${order.orderId}.png`;
+    link.download = `Qart-${order.orderId}.png`;
     link.href = canvas.toDataURL();
     link.click();
   };

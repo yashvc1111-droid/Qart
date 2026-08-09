@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { ScanLine, ShieldCheck, Zap, Smartphone, ArrowRight } from 'lucide-react';
 import { HERO_IMAGE } from '../data';
 
@@ -33,7 +33,7 @@ export function Login({ onLogin }: LoginProps) {
             S
           </div>
           <div>
-            <h1 className="text-xl font-extrabold tracking-tight">SmartCart</h1>
+            <h1 className="text-xl font-extrabold tracking-tight">Qart</h1>
             <p className="text-xs text-white/70">Self-Checkout · Smart Supermarket</p>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { ArrowLeft, Check, ListChecks, Plus, ScanLine, Trash2 } from 'lucide-react';
+﻿import { ArrowLeft, Check, ListChecks, Plus, ScanLine, Trash2 } from 'lucide-react';
 import { PRODUCTS } from '../data';
 import type { Product } from '../types';
 
@@ -80,7 +80,7 @@ export function ShoppingList({
             />
           </div>
           <p className="mt-2 text-xs text-muted">
-            Scan items in any order. SmartCart will tick them automatically.
+            Scan items in any order. Qart will tick them automatically.
           </p>
         </div>
 
