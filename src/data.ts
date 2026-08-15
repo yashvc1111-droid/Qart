@@ -1,3 +1,4 @@
+import qartLoginBackground from './assets/qart-login-background.jpg';
 import type { Product } from './types';
 
 export const CATEGORIES = [
@@ -373,8 +374,7 @@ export const OFFERS = [
   },
 ];
 
-export const HERO_IMAGE =
-  'https://images.pexels.com/photos/6753523/pexels-photo-6753523.jpeg?auto=compress&cs=tinysrgb&h=650&w=940';
+export const HERO_IMAGE = qartLoginBackground;
 
 export const formatINR = (amount: number): string =>
   '₹' + amount.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
