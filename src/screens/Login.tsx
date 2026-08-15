@@ -17,16 +17,12 @@ export function Login({ onLogin }: LoginProps) {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-brand-dark">
-      <img
-        src={HERO_IMAGE}
-        alt=""
-        className="absolute inset-0 h-full w-full object-cover opacity-25"
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/80 via-brand-dark/70 to-brand-dark" />
-      <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand/40 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -left-20 h-80 w-80 rounded-full bg-accent/30 blur-3xl" />
-
+    <div className="relative min-h-screen overflow-hidden bg-white">
+  <img
+    src={HERO_IMAGE}
+    alt=""
+    className="absolute inset-0 h-full w-full object-cover"
+  />
       <div className="relative mx-auto flex min-h-screen max-w-md flex-col justify-center px-5 py-10">
         <div className="mb-8 flex items-center gap-3 text-white animate-fade-up">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 text-2xl font-extrabold backdrop-blur">
